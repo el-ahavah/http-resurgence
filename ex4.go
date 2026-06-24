@@ -12,7 +12,6 @@ Key Tasks
 ○     Missing language → "language is required"
 ●     If both are present — respond with: "Hello [username], you are coding in [language]!"
 
-
 Think about —
 What is the difference between r.ParseForm() + r.Form.Get() and just r.FormValue()?
 r.FormValue() calls ParseForm internally — but calling ParseForm explicitly first
@@ -23,3 +22,47 @@ Stretch — do this after the core task works
 ○     Read Content-Type from r.Header.Get() and check it before parsing.
 ○     Test it: curl -X POST -H "Content-Type: text/plain" -d "username=Ada" http://localhost:8080/form
 */
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"strings"
+)
+
+func formhandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "400 Bad Request", http.StatusBadRequest)
+		return
+	}
+	contentType := r.Header.Get("Content-Type")
+
+	if !strings.HasPrefix(contentType, "application/x-www-form-urlencoded") {
+		http.Error(w, "415 unsupported media type", http.StatusUnsupportedMediaType)
+		return
+	}
+
+	r.ParseForm()
+	username := r.FormValue("username")
+
+	if username == "" {
+		http.Error(w, "username is required", http.StatusBadRequest)
+		return
+	}
+
+	language := r.FormValue("language")
+
+	if language == "" {
+		http.Error(w, "language is required", http.StatusBadRequest)
+		return
+	}
+
+	fmt.Fprintf(w, "Hello %v, you are coding in %v!", username, language)
+
+}
+
+func main() {
+	http.HandleFunc("/form", formhandler)
+	fmt.Println("server running on http://localhost:8080")
+	http.ListenAndServe(":8080", nil)
+}

@@ -22,3 +22,42 @@ Stretch — do this after the core task works
 ○     ?code=404 → "Responding with status 404 Not Found"
 ○     Use http.StatusText(code) to get the official status name.
 */
+package main
+
+import (
+	"fmt"
+	"net/http"
+	"strconv"
+)
+
+func statushandler(w http.ResponseWriter, r *http.Request) {
+	querycode := r.URL.Query().Get("code")
+	if querycode == "" {
+		http.Error(w, "code parameter is required", http.StatusBadRequest)
+		return
+	}
+
+	code, err := strconv.Atoi(querycode)
+	if err != nil {
+		http.Error(w, "code must be a valid integer", http.StatusBadRequest)
+		return
+	}
+
+	if code < 100 || code > 599 {
+		http.Error(w, "code must be a valid HTTP status code (100–599)", http.StatusBadRequest)
+		return
+	}
+
+	w.WriteHeader(code)
+
+	//	w.Write([]byte("Responding with status %v", code))
+
+	fmt.Fprintf(w, "Responding with status %v %v", code, http.StatusText(code))
+
+}
+
+func main() {
+	http.HandleFunc("/status", statushandler)
+	fmt.Println("server running on http://localhost:8080")
+	http.ListenAndServe(":8080", nil)
+}

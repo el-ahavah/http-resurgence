@@ -2,7 +2,7 @@
 Exercise 2: The Echo Chamber
 Goal
 Create an /echo endpoint that only accepts POST requests. When a client sends a POST with a body, read the entire body and send it straight back. The response must be exactly what was sent — nothing added, nothing removed.
- 
+
 Key Tasks
 ●     Reject any non-POST request with http.StatusMethodNotAllowed (405).
 ●     Read the full request body using io.ReadAll(r.Body).
@@ -13,10 +13,46 @@ Key Tasks
 Think about —
 What does io.ReadAll return if the request has no body at all?
 Is len(body) == 0 the same as body == nil? Try both and see.
-What happens to r.Body if you read it twice without closing it? 
+What happens to r.Body if you read it twice without closing it?
 
 Stretch — do this after the core task works
 ●     Add a response header: Content-Type: text/plain before writing the body back.
 ○     Use w.Header().Set("Content-Type", "text/plain") — and call it before w.Write().
 ○     What happens if you call w.Header().Set() after w.Write()? Try it and explain what you observe.
 */
+package main
+
+import (
+	"fmt"
+	"io"
+	"net/http"
+)
+
+func echohandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "405 Method Not Allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	defer r.Body.Close()
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "400 Bad Request", http.StatusBadRequest)
+		return
+	}
+
+	if len(body) == 0 {
+		http.Error(w, "400 Bad Request", http.StatusBadRequest)
+		return
+	}
+	w.Header().Set("Content-Type", "text/plain")
+	w.Write(body)
+
+}
+
+func main() {
+	http.HandleFunc("/echo", echohandler)
+	fmt.Println("server running on http://localhost:8080")
+	http.ListenAndServe(":8080", nil)
+}

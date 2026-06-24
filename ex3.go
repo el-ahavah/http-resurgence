@@ -1,5 +1,3 @@
-
-
 /*
 Exercise 3: Header Detective
 Goal
@@ -23,3 +21,37 @@ Stretch — do this after the core task works
 ●     What does r.Header.Get() return for a header key that was never sent? Write a one-sentence answer in a comment at the top of your file.
 ●     Is r.Header.Get("x-custom-token") the same as r.Header.Get("X-Custom-Token")? Find out.
 */
+package main
+
+import (
+	"fmt"
+	"net/http"
+)
+
+func headershandler(w http.ResponseWriter, r *http.Request) {
+	customToken := r.Header.Get("X-Custom-Token")
+
+	if customToken == "" {
+		http.Error(w, "X-Custom-Token header is missing", http.StatusBadRequest)
+		return
+	} else {
+		fmt.Fprintf(w, "Token received: %v", customToken)
+	}
+
+	contentType := r.Header.Get("Content-Type")
+
+	if contentType == "" {
+		http.Error(w, "Content-Type not provided", http.StatusBadRequest)
+		return
+	} else {
+		fmt.Fprintf(w, "Content-Type: %v", contentType)
+		return
+	}
+
+}
+
+func main() {
+	http.HandleFunc("/headers", headershandler)
+	fmt.Println("server running on http://localhost:8080")
+	http.ListenAndServe(":8080", nil)
+}

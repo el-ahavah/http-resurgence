@@ -23,7 +23,6 @@ Stretch — do this after the core task works
 package main
 
 import (
-	"fmt"
 	"io"
 	"net/http"
 )
@@ -49,10 +48,4 @@ func echohandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/plain")
 	w.Write(body)
 
-}
-
-func main() {
-	http.HandleFunc("/echo", echohandler)
-	fmt.Println("server running on http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
 }

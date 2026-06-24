@@ -55,9 +55,3 @@ func statushandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Responding with status %v %v", code, http.StatusText(code))
 
 }
-
-func main() {
-	http.HandleFunc("/status", statushandler)
-	fmt.Println("server running on http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
-}

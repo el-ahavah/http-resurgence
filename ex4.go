@@ -60,9 +60,3 @@ func formhandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello %v, you are coding in %v!", username, language)
 
 }
-
-func main() {
-	http.HandleFunc("/form", formhandler)
-	fmt.Println("server running on http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
-}

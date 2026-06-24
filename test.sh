@@ -1,8 +1,3 @@
-Terminal Test Script (test_endpoints.sh)
-This shell script acts as an automated collection of curl requests. You can run this directly from their terminal to verify if their 7 endpoints match your performance requirements.
-Create a file named test_endpoints.sh, paste the code below, and make it executable using chmod +x test_endpoints.sh.
-Use ./test_endpoints.sh  to run the tests.
-
 #!/bin/bash
 SERVER_URL="http://localhost:8080"
 GREEN='\033[0;32m'
@@ -62,4 +57,3 @@ R7E=$(curl -s -o /dev/null -w "%{http_code}" "$SERVER_URL/render")
 if [ "$R7E" == "400" ]; then echo -e "${GREEN}✔ PASS: missing params returns 400${NC}"; else echo -e "${RED}✘ FAIL: expected 400 got $R7E${NC}"; fi
 
 echo -e "\n${BLUE}=== Verification Complete ===${NC}"
-

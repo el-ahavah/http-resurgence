@@ -44,7 +44,6 @@ Stretch — do this after the core task works
 package main
 
 import (
-	"fmt"
 	"html/template"
 	"net/http"
 )
@@ -94,10 +93,4 @@ func renderhandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "500 template execution failed", http.StatusInternalServerError)
 		return
 	}
-}
-
-func main() {
-	http.HandleFunc("/render", renderhandler)
-	fmt.Println("server running on http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
 }

@@ -70,18 +70,3 @@ func greethandler(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Fprintf(w, "Greetings, %s!", name)
 }
-
-func main() {
-	apiMux := http.NewServeMux()
-
-	apiMux.HandleFunc("/v1/ping", pinghandler)
-	apiMux.HandleFunc("/v1/greet", greethandler)
-
-	mainMux := http.NewServeMux()
-
-	mainMux.Handle("/api/", http.StripPrefix("/api", apiMux))
-
-	fmt.Println("server running on http://localhost:8080")
-
-	http.ListenAndServe(":8080", mainMux)
-}

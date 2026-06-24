@@ -27,9 +27,3 @@ import (
 func methodinspectorhandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "You made a %v request", r.Method)
 }
-
-func main() {
-	http.HandleFunc("/method-inspector", methodinspectorhandler)
-	fmt.Println("server running on http://localhost:8080")
-	http.ListenAndServe(":8080", nil)
-}
